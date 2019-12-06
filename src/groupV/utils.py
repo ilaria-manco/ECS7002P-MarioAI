@@ -20,3 +20,8 @@ def get_files(path, suffix):
 	except OSError as e:
 		print('Error: Invalid path!')
 		return []
+
+# TODO: load data from dataset files:
+def load_data(filename):
+
+	return
