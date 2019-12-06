@@ -9,13 +9,13 @@ Model built in this project is using Python 3, based on [Tensorflow](https://www
 
 Before running, please install all the requirements by running:
 
-	pip install -r requirements.txt
+    pip install -r requirements.txt
 
 ## Generate Mario Level
 
 A pre-trained model is provided as `model_final.hdf5`, use the following command to generate Mario Levels, indicating how many levels you want to generate (by default, the command will generate 2 levels):
 
-	python generate_level.py <number_of_levels>
+    python generate_level.py <number_of_levels>
 
 Please find the generated levels in `new_levels` folder.
 
@@ -23,11 +23,11 @@ Please find the generated levels in `new_levels` folder.
 
 Run the following command to divide dataset into training, validation and testing.
 
-	python data_preparation.py
+    python data_preparation.py
 
 ## Training
 
 To train the model, please run:
 
-	python train.py
+    python train.py
 
