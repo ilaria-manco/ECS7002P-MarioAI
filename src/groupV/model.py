@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from shutil import copyfile
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, TimeDistributed, Activation, Dropout
+from keras.layers import Dense, LSTM, TimeDistributed, Activation, Dropout, Bidirectional
 from keras.optimizers import Adam
 from keras.callbacks import Callback
 
@@ -41,7 +41,7 @@ class KerasBatchGenerator(object):
             yield x, y
 
 
-# plot loss graph after each epoch
+# plot loss graph and save best model after each epoch
 class PlotLosses(Callback):
     def __init__(self, path):
         self.losses = []
@@ -54,7 +54,7 @@ class PlotLosses(Callback):
 
         # save best model
         if len(self.val_losses) != 0 and logs.get('val_loss') < min(self.val_losses):
-            copyfile("runs\\models\\model_{}.hdf5".format(epoch), "runs\\models\\model_best.hdf5")
+            copyfile("runs\\models\\model_{}.hdf5".format(epoch), "runs\\model_best.hdf5")
 
         # plot losses and acccuracies
         self.losses.append(logs.get('loss'))
@@ -87,12 +87,15 @@ class PlotLosses(Callback):
 
 
 # build LSTM model structure
-def build_LSTM(dropout, time_steps, num_features, embedding_size, hidden_size, vocabulary, lr, decay_rate):
+def build_LSTM(dropout, time_steps, num_features, embedding_size, hidden_size, vocabulary, lr, decay_rate, bi_directional=False):
     model = Sequential()
     model.add(Dropout(dropout, input_shape=(time_steps, num_features)))
     if embedding_size > 0:
         model.add(TimeDistributed(Dense(embedding_size)))
-    model.add(LSTM(hidden_size, return_sequences=True))
+    if bi_directional:
+        model.add(Bidirectional(LSTM(hidden_size, return_sequences=True)))
+    else:
+        model.add(LSTM(hidden_size, return_sequences=True))
     model.add(Dropout(dropout))
     model.add(TimeDistributed(Dense(vocabulary)))
     model.add(Activation('softmax'))

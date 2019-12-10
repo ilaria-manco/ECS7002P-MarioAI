@@ -25,14 +25,14 @@ def get_files(path, suffix):
         return []
 
 # load data from dataset files:
-def load_data(dataset_filename):
+def load_data(dataset_filename, snaking=False, start_from_top=False):
     dataset_file = open(dataset_filename, 'r', encoding='utf-8')
     level_filenames = dataset_file.readlines()
     data = []
 
     for i in range(len(level_filenames)):
         try:
-            columns_array = convert_level_to_string(level_filenames[i][:-1], snaking=False, start_from_top=False)
+            columns_array = convert_level_to_string(level_filenames[i][:-1], snaking=snaking, start_from_top=start_from_top)
             int_array = encode_level_string_to_array_int(columns_array, tiles_to_int_mapping)
             new_data_from_file = np.zeros((len(int_array), len(all_tiles)), dtype=bool)
             for j in range(len(int_array)):

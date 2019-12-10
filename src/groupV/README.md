@@ -31,3 +31,8 @@ To train the model, please run:
 
     python train.py
 
+You can also train other model architectures by running
+
+    python train.py --bi_directional <0/1> --snaking <0/1> --start_from_top <0/1>
+
+please indicate your choice in the command (`yes - 1, no - 0`).
