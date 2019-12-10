@@ -20,8 +20,17 @@ valid_data_generator = KerasBatchGenerator(valid_data, batch_size, time_steps, n
 # create LSTM model
 model = build_LSTM(dropout, time_steps, num_features, embedding_size, hidden_size, vocabulary, lr, decay_rate)
 
-# TODO: design checkpoint
+# design checkpoint
+checkpointer = ModelCheckpoint(filepath="runs\\models\\model_{epoch}.hdf5", verbose=1)
+plot_losses = PlotLosses("runs\\plots\\")
 
-# TODO: get number of batches for each epoch
+# get number of batches for each epoch
+steps_per_epoch = 0
+for i in range(len(train_data)):
+    steps_per_epoch += len(train_data[i] - time_steps) // (batch_size * skip_step)
+validation_steps = 0
+for i in range(len(valid_data)):
+    validation_steps += len(valid_data[i] - time_steps) // (batch_size * skip_step)
 
-# TODO: model training
+# model training
+model.fit_generator(train_data_generator.generate(), steps_per_epoch, num_epochs, validation_data=valid_data_generator.generate(), validation_steps=validation_steps, callbacks=[checkpointer, plot_losses])
