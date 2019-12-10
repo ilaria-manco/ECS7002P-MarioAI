@@ -13,7 +13,7 @@ Before running, please install all the requirements by running:
 
 ## Generate Mario Level
 
-A pre-trained model is provided as `model_final.hdf5`, use the following command to generate Mario Levels, indicating how many levels you want to generate (by default, the command will generate 2 levels):
+A pre-trained model is provided as `runs/model_best.hdf5`, use the following command to generate Mario Levels, indicating how many levels you want to generate (by default, the command will generate 2 levels):
 
     python generate_level.py <number_of_levels>
 

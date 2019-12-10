@@ -29,7 +29,7 @@ class KerasBatchGenerator(object):
 
         while True:
             for i in range(self.batch_size):
-                if self.current_index + self.time_steps + 1 >= len(self.data[self.file_index][0]):
+                if self.current_index + self.time_steps + self.skip_step + 1 >= self.data[self.file_index].shape[0]:
                     self.current_index = 0
                     self.file_index = (self.file_index + 1) % len(self.data)
 
