@@ -26,6 +26,7 @@ PLATFORM = '%'
 
 # enemies that can be in the level
 GOOMBA = 'g'
+GOOMBA_ALT = 'E'
 GOOMBA_WINGED = 'G'
 RED_KOOPA = 'r'
 RED_KOOPA_WINGED = 'R'
@@ -49,7 +50,7 @@ all_tiles = [MARIO_START,
              PIPE, PIPE_FLOWER,
              BULLET_BILL,
              PLATFORM_BACKGROUND, PLATFORM,
-             GOOMBA, GOOMBA_WINGED,
+             GOOMBA, GOOMBA_ALT, GOOMBA_WINGED,
              RED_KOOPA, RED_KOOPA_WINGED,
              GREEN_KOOPA, GREEN_KOOPA_WINGED,
              SPIKY, SPIKY_WINGED]
