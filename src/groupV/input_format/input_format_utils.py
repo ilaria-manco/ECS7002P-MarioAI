@@ -1,5 +1,5 @@
 import numpy as np
-import mario_level_model
+# import mario_level_model
 
 
 # read level from txt file and convert into string depending on ordering parameters

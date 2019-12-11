@@ -31,7 +31,8 @@ def create_path(path):
 
 # decode one-hot vector to int
 def onehot_to_int(vector_array):
-    return np.argwhere(vector_array==1)[0,0]
+    index = np.argmax(vector_array)
+    return index
 
 # get dictionary size for word rnn (predicting stripes)
 def get_dict_size():
@@ -86,13 +87,13 @@ def load_data_word(dataset_filename):
     return data
 
 # get a list of seeds for level generation from the test set.
-def get_seeds(num, word_rnn, snaking, start_from_top):
+def get_seeds(num, time_steps, num_features, vocabulary, word_rnn, snaking, start_from_top):
     if word_rnn:
         num_features, vocabulary = get_dict_size()
         time_steps = time_steps_word_rnn
 
     testset_file = open(TESTING, 'r', encoding='utf-8')
-    level_filenames = dataset_file.readlines()
+    level_filenames = testset_file.readlines()
 
     seeds = []
     for i in range(num):
@@ -112,15 +113,21 @@ def get_seeds(num, word_rnn, snaking, start_from_top):
     return seeds
 
 # generate level data from seed and trained model
-def generate_level_data(level_data, seed, model, word_rnn):
+def generate_level_data(level_data, seed, model, time_steps, num_features, vocabulary, word_rnn):
     if word_rnn:
         num_features, vocabulary = get_dict_size()
         time_steps = time_steps_word_rnn
 
+    level_data[:time_steps, :] = seed
     index = 0
     while index + time_steps < level_data.shape[0]:
-        x = level_data[index:index+time_steps, :].copy()
+        x = np.zeros((1, time_steps, num_features), dtype=bool)
+        x[0,:,:] = level_data[index:index+time_steps, :].copy()
         prediction = model.predict(x)[0, time_steps-1, :]
-        y = sample(prediction, diversity)
-        level_data[index+time_steps, y] = 1
+        if max(prediction[0:2]) > 0.15 or max(prediction[3:]) > 0.15:
+            prediction[2] = 0
+        y = sample(prediction, 0.6)
+        level_data[index+time_steps, y] = True
         index += 1
+
+    return level_data.copy()
