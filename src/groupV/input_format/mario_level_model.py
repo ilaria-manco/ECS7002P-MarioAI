@@ -57,3 +57,5 @@ all_tiles = [MARIO_START,
 
 # map tiles to integers
 tiles_to_int_mapping = dict((c, i) for i, c in enumerate(all_tiles))
+# map tiles to integers
+int_to_tiles_mapping = dict((i, c) for i, c in enumerate(all_tiles))
