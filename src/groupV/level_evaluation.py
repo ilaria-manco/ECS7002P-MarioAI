@@ -7,6 +7,8 @@ class LevelMetrics:
         self.path = "/Users/Ilaria/mario-assignment/levels/notchParam/" + level_name
         self.text = self.read_level()
         self.matrix = self.get_level_matrix()
+        self.num_tiles = len(self.matrix.flatten())
+        self.enemies = ["G", "g", "r", "R", "k", "K", "y", "Y"]
         self.linearity = self.get_linearity()
         self.leniency = self.get_leniency()
         self.density = self.get_density()
@@ -94,13 +96,12 @@ class LevelMetrics:
     def get_leniency(self):
         # enemies + gaps - rewards
         # todo use mario level model for lists below
-        enemies = ["G", "g", "r", "R", "k", "K", "y", "Y"]
         powerups = ["@", "U", "?"]
         pipes = ["T", "t"]
         w = 0
         for column in self.matrix:
             for tile in column:
-                if tile in enemies:
+                if tile in self.enemies:
                     w += -1
                 if tile in powerups:
                     w += 1
@@ -114,9 +115,13 @@ class LevelMetrics:
 
     def get_density(self):
         empty_tiles = np.sum(self.matrix.flatten() == '-')
-        num_tiles = len(self.matrix.flatten())
 
-        return 1 - (empty_tiles/num_tiles)
+        return 1 - (empty_tiles/self.num_tiles)
+
+    def get_enemy_density(self):
+        enemy_tiles = np.sum(np.isin(self.matrix.flatten(), self.enemies))
+
+        return enemy_tiles/self.num_tiles
 
     def get_pattern_density(self):
         # todo
@@ -124,4 +129,4 @@ class LevelMetrics:
 
 
 example_level = LevelMetrics("lvl-2.txt")
-print(example_level.density)
+print(example_level.get_enemy_density())
