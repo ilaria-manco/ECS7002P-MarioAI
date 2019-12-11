@@ -7,10 +7,12 @@ class LevelMetrics:
         self.path = "/Users/Ilaria/mario-assignment/levels/notchParam/" + level_name
         self.text = self.read_level()
         self.matrix = self.get_level_matrix()
-        # self.linearity = self.get_linearity()
-        # self.leniency = self.get_leniency()
-        # self.density = self.get_density()
-        # self.pattern_density = self.get_pattern_density()
+        self.num_tiles = len(self.matrix.flatten())
+        self.enemies = ["G", "g", "r", "R", "k", "K", "y", "Y"]
+        self.linearity = self.get_linearity()
+        self.leniency = self.get_leniency()
+        self.density = self.get_density()
+        self.pattern_density = self.get_pattern_density()
 
     def read_level(self):
         with open(self.path) as level_file:
@@ -27,6 +29,23 @@ class LevelMetrics:
             lines.append(characters)
 
         return np.array(lines).T
+
+    def get_column(self, index):
+        """ Get all characters in given level column (top to bottom) """
+
+        return self.matrix[index][::-1]
+
+    def get_row(self, index):
+        """ Get all characters in given level row (left to right) """
+
+        return self.matrix[:, ::-1][:, index]
+
+    def get_gaps_in_the_floow(self):
+
+        return self.get_row(0).tolist().count("-")
+
+    # def get_ground_to_floating_ratio(self):
+    #     valid_tiles = [""]
 
     def get_mountain_outlines(self):
         hills_and_blocks = np.where(np.logical_or(self.matrix == "#", self.matrix == "%"))
@@ -61,11 +80,13 @@ class LevelMetrics:
     def get_linearity(self):
         mountains = self.get_mountain_outlines()
         sum_r_quare = 0
-        num_mountains = int(len(mountains)/2)
+        num_mountains = len(mountains)
         index = 0
         while index < num_mountains:
             m, q, r, p, std = stats.linregress(np.array([mountains[index][0], mountains[index][1]]))
             r_square = r**2
+            if m == 0:
+                r_square = 1
             sum_r_quare += r_square
             index += 1
         avg_r_square = sum_r_quare / len(mountains)
@@ -73,19 +94,39 @@ class LevelMetrics:
         return avg_r_square
 
     def get_leniency(self):
-        # todo
-        return None
+        # enemies + gaps - rewards
+        # todo use mario level model for lists below
+        powerups = ["@", "U", "?"]
+        pipes = ["T", "t"]
+        w = 0
+        for column in self.matrix:
+            for tile in column:
+                if tile in self.enemies:
+                    w += -1
+                if tile in powerups:
+                    w += 1
+                if tile in pipes:
+                    w += -0.5
+        # len_of_mountains = len([j for j in [i for i in self.get_mountain_outlines()[:, 0].flatten()] for j in j])
+        gaps = self.get_gaps_in_the_floow()
+        w = w - gaps
+
+        return w
 
     def get_density(self):
-        # todo
-        return None
+        empty_tiles = np.sum(self.matrix.flatten() == '-')
+
+        return 1 - (empty_tiles/self.num_tiles)
+
+    def get_enemy_density(self):
+        enemy_tiles = np.sum(np.isin(self.matrix.flatten(), self.enemies))
+
+        return enemy_tiles/self.num_tiles
 
     def get_pattern_density(self):
         # todo
         return None
 
 
-example_level = LevelMetrics("lvl-32.txt")
-example_matrix = example_level
-
-print(example_matrix.get_linearity())
+example_level = LevelMetrics("lvl-2.txt")
+print(example_level.get_enemy_density())
