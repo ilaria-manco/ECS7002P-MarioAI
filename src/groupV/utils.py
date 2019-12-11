@@ -31,8 +31,6 @@ def load_data(dataset_filename, snaking=False, start_from_top=False):
     data = []
 
     for i in range(len(level_filenames)):
-        if i > 20:
-            break
         try:
             columns_array = convert_level_to_string(level_filenames[i][:-1], snaking=snaking, start_from_top=start_from_top)
             int_array = encode_level_string_to_array_int(columns_array, tiles_to_int_mapping)
@@ -45,6 +43,11 @@ def load_data(dataset_filename, snaking=False, start_from_top=False):
 
     return data
 
+# create folder if not exist
+def create_path(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 
 # load training and validation data for word rnn.
 def load_data_word(dataset_filename):
@@ -54,8 +57,6 @@ def load_data_word(dataset_filename):
     data = []
 
     for i in range(len(level_filenames)):
-        if i > 100:
-            break
         try:
             columns_array = convert_level_to_columns(level_filenames[i][:-1], True)
             new_data_from_file = np.zeros((len(columns_array), len(word_to_int_dict)), dtype=bool)

@@ -12,11 +12,16 @@ warnings.filterwarnings("ignore")
 
 # parser arguments
 parser = argparse.ArgumentParser()
+parser.add_argument('run_name', type=str, help='please specify a name of this run!')
 parser.add_argument('--word_rnn', type=bool, default=False, help='train a word rnn which takes stripes as words in model? 0 - No, 1 - Yes')
-parser.add_argument('--bi_directional', type=bool, default=False, help='use bi-directional LSTM model? 0 - No, 1 - Yes')
-parser.add_argument('--snaking', type=bool, default=False, help='use snaking in data representation? 0 - No, 1 - Yes')
-parser.add_argument('--start_from_top', type=bool, default=False, help='start from top during encoding data representation? 0 - No, 1 - Yes')
+parser.add_argument('--bi_directional', type=bool, default=True, help='use bi-directional LSTM model? 0 - No, 1 - Yes')
+parser.add_argument('--snaking', type=bool, default=True, help='use snaking in data representation? 0 - No, 1 - Yes')
+parser.add_argument('--start_from_top', type=bool, default=True, help='start from top during encoding data representation? 0 - No, 1 - Yes')
 args = parser.parse_args()
+
+# create folders to save run experiment results.
+utils.create_path("runs\\"+ args.run_name + "\\models")
+utils.create_path("runs\\" + args.run_name + "\\plots")
 
 
 # load training, testing, and validation data
@@ -36,8 +41,8 @@ valid_data_generator = KerasBatchGenerator(valid_data, batch_size, time_steps, n
 model = build_LSTM(dropout, time_steps, num_features, embedding_size, hidden_size, vocabulary, lr, decay_rate, bi_directional=args.bi_directional)
 
 # design checkpoint
-checkpointer = ModelCheckpoint(filepath="runs\\models\\model_{epoch}.hdf5", verbose=1)
-plot_losses = PlotLosses("runs\\plots\\")
+checkpointer = ModelCheckpoint(filepath="runs\\"+args.run_name+"\\models\\model_{epoch}.hdf5", verbose=1)
+plot_losses = PlotLosses("runs\\"+args.run_name+"\\plots\\", args.run_name)
 
 # get number of batches for each epoch
 steps_per_epoch = 0

@@ -43,18 +43,19 @@ class KerasBatchGenerator(object):
 
 # plot loss graph and save best model after each epoch
 class PlotLosses(Callback):
-    def __init__(self, path):
+    def __init__(self, path, run_name):
         self.losses = []
         self.val_losses = []
         self.accuracies = []
         self.val_accuracies = []
         self.path = path  # path to save losses and accuracies plots
+        self.run_name = run_name
 
     def on_epoch_end(self, epoch, logs={}):
 
         # save best model
         if len(self.val_losses) != 0 and logs.get('val_loss') < min(self.val_losses):
-            copyfile("runs\\models\\model_{}.hdf5".format(epoch), "runs\\model_best.hdf5")
+            copyfile("runs\\" +self.run_name+"\\models\\model_{}.hdf5".format(epoch), "runs\\"+self.run_name+"\\model_best.hdf5")
 
         # plot losses and acccuracies
         self.losses.append(logs.get('loss'))
