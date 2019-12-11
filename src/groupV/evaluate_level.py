@@ -93,7 +93,7 @@ class LevelMetrics:
 
     def get_leniency(self):
         # enemies + gaps - rewards
-        # todo
+        # todo use mario level model for lists below
         enemies = ["G", "g", "r", "R", "k", "K", "y", "Y"]
         powerups = ["@", "U", "?"]
         pipes = ["T", "t"]
@@ -113,8 +113,10 @@ class LevelMetrics:
         return w
 
     def get_density(self):
-        # todo
-        return None
+        empty_tiles = np.sum(self.matrix.flatten() == '-')
+        num_tiles = len(self.matrix.flatten())
+
+        return 1 - (empty_tiles/num_tiles)
 
     def get_pattern_density(self):
         # todo
@@ -122,3 +124,4 @@ class LevelMetrics:
 
 
 example_level = LevelMetrics("lvl-2.txt")
+print(example_level.density)
