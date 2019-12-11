@@ -28,3 +28,20 @@ for i in range(len(all_files)):
         validation_set_file.write(all_files[i] + '\n')
     else:
         testing_set_file.write(all_files[i] + '\n')
+
+# create word dictionary
+word_to_int_dict = dict()
+int_to_word_dict = dict()
+word_set = set()
+for i in range(len(all_files)):
+    columns_array = convert_level_to_columns(all_files[i], True)
+    for word in columns_array:
+        word_set.add(word)
+words = sorted(list(word_set))
+word_to_int_dict = dict((c, i) for i, c in enumerate(words))
+int_to_word_dict = dict((i, c) for i, c in enumerate(words))
+
+print(word_to_int_dict)
+print(int_to_word_dict)
+np.save('data\\word_to_int_dict.npy', word_to_int_dict)
+np.save('data\\int_to_word_dict.npy', int_to_word_dict)
