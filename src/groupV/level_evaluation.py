@@ -3,9 +3,11 @@ from scipy import stats
 
 
 class LevelMetrics:
-    def __init__(self, level_name):
-        self.path = "/Users/Ilaria/mario-assignment/levels/notchParam/" + level_name
+    def __init__(self, path_to_level):
+        # self.path = "/Users/Ilaria/mario-assignment/levels/notchParam/" + level_name
+        self.path = path_to_level
         self.text = self.read_level()
+        self.is_level_valid = self.check_validity()
         self.matrix = self.get_level_matrix()
         self.num_tiles = len(self.matrix.flatten())
         self.enemies = ["G", "g", "r", "R", "k", "K", "y", "Y"]
@@ -19,6 +21,10 @@ class LevelMetrics:
             level_string = level_file.read().splitlines()
 
         return level_string
+
+    def check_validity(self):
+        if not self.text:
+            raise Exception("Level is not valid")
 
     def get_level_matrix(self):
         lines = []
@@ -82,6 +88,7 @@ class LevelMetrics:
         sum_r_quare = 0
         num_mountains = len(mountains)
         index = 0
+        #todo check notchParam
         while index < num_mountains:
             m, q, r, p, std = stats.linregress(np.array([mountains[index][0], mountains[index][1]]))
             r_square = r**2
@@ -92,6 +99,8 @@ class LevelMetrics:
         avg_r_square = sum_r_quare / len(mountains)
 
         return avg_r_square
+
+    #todo add floating vs ground
 
     def get_leniency(self):
         # enemies + gaps - rewards
@@ -111,7 +120,7 @@ class LevelMetrics:
         gaps = self.get_gaps_in_the_floow()
         w = w - gaps
 
-        return w
+        return w / len(self.matrix)
 
     def get_density(self):
         empty_tiles = np.sum(self.matrix.flatten() == '-')
@@ -128,5 +137,5 @@ class LevelMetrics:
         return None
 
 
-example_level = LevelMetrics("lvl-2.txt")
-print(example_level.get_enemy_density())
+example_level = LevelMetrics("/Users/Ilaria/mario-assignment/levels/hopper/lvl-2.txt")
+print(example_level.leniency)
