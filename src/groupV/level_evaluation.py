@@ -4,7 +4,6 @@ from scipy import stats
 
 class LevelMetrics:
     def __init__(self, path_to_level):
-        # self.path = "/Users/Ilaria/mario-assignment/levels/notchParam/" + level_name
         self.path = path_to_level
         self.text = self.read_level()
         self.is_level_valid = self.check_validity()
@@ -14,7 +13,6 @@ class LevelMetrics:
         self.linearity = self.get_linearity()
         self.leniency = self.get_leniency()
         self.density = self.get_density()
-        self.pattern_density = self.get_pattern_density()
 
     def read_level(self):
         with open(self.path) as level_file:
@@ -49,9 +47,6 @@ class LevelMetrics:
     def get_gaps_in_the_floow(self):
 
         return self.get_row(0).tolist().count("-")
-
-    # def get_ground_to_floating_ratio(self):
-    #     valid_tiles = [""]
 
     def get_mountain_outlines(self):
         hills_and_blocks = np.where(np.logical_or(self.matrix == "#", self.matrix == "%"))
@@ -115,7 +110,6 @@ class LevelMetrics:
                     w += 1
                 if tile in pipes:
                     w += -0.5
-        # len_of_mountains = len([j for j in [i for i in self.get_mountain_outlines()[:, 0].flatten()] for j in j])
         gaps = self.get_gaps_in_the_floow()
         w = w - gaps
 
@@ -124,17 +118,9 @@ class LevelMetrics:
     def get_density(self):
         empty_tiles = np.sum(self.matrix.flatten() == '-')
 
-        return 1 - (empty_tiles/self.num_tiles)
+        return 1 - (empty_tiles/16)
 
     def get_enemy_density(self):
         enemy_tiles = np.sum(np.isin(self.matrix.flatten(), self.enemies))
 
         return enemy_tiles/self.num_tiles
-
-    def get_pattern_density(self):
-        # todo
-        return None
-
-
-# example_level = LevelMetrics("/Users/Ilaria/mario-assignment/levels/hopper/lvl-2.txt")
-# print(example_level.leniency)
