@@ -88,14 +88,14 @@ class LevelMetrics:
         sum_r_quare = 0
         num_mountains = len(mountains)
         index = 0
-        #todo check notchParam
         while index < num_mountains:
-            m, q, r, p, std = stats.linregress(np.array([mountains[index][0], mountains[index][1]]))
-            r_square = r**2
-            if m == 0:
-                r_square = 1
-            sum_r_quare += r_square
-            index += 1
+            if len(mountains[index]) > 1:
+                m, q, r, p, std = stats.linregress(np.array([mountains[index][0], mountains[index][1]]))
+                r_square = r**2
+                if m == 0:
+                    r_square = 1
+                sum_r_quare += r_square
+                index += 1
         avg_r_square = sum_r_quare / len(mountains)
 
         return avg_r_square
@@ -104,7 +104,6 @@ class LevelMetrics:
 
     def get_leniency(self):
         # enemies + gaps - rewards
-        # todo use mario level model for lists below
         powerups = ["@", "U", "?"]
         pipes = ["T", "t"]
         w = 0
@@ -137,5 +136,5 @@ class LevelMetrics:
         return None
 
 
-example_level = LevelMetrics("/Users/Ilaria/mario-assignment/levels/hopper/lvl-2.txt")
-print(example_level.leniency)
+# example_level = LevelMetrics("/Users/Ilaria/mario-assignment/levels/hopper/lvl-2.txt")
+# print(example_level.leniency)
