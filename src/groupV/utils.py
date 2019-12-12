@@ -24,6 +24,30 @@ def get_files(path, suffix):
         print('Error: Invalid path!')
         return []
 
+# create folder if not exist
+def create_path(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+# decode one-hot vector to int
+def onehot_to_int(vector_array):
+    index = np.argmax(vector_array)
+    return index
+
+# get dictionary size for word rnn (predicting stripes)
+def get_dict_size():
+    size = len(np.load('data\\word_to_int_dict.npy').item())
+    return size, size
+
+# sample a block from probability prediction
+def sample(prediction, diversity=0.6):
+    prediction = np.asarray(prediction).astype('float64')
+    prediction = np.log(prediction) / diversity
+    prediction_exp = np.exp(prediction)
+    prediction = prediction_exp / np.sum(prediction_exp)
+    probs = np.random.multinomial(1, prediction, 1)
+    return np.argmax(probs)
+
 # load data from dataset files:
 def load_data(dataset_filename, snaking=False, start_from_top=False):
     dataset_file = open(dataset_filename, 'r', encoding='utf-8')
@@ -42,12 +66,6 @@ def load_data(dataset_filename, snaking=False, start_from_top=False):
             print("cannot convert level file: " + level_filenames[i])
 
     return data
-
-# create folder if not exist
-def create_path(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
 
 # load training and validation data for word rnn.
 def load_data_word(dataset_filename):
@@ -68,7 +86,48 @@ def load_data_word(dataset_filename):
 
     return data
 
+# get a list of seeds for level generation from the test set.
+def get_seeds(num, time_steps, num_features, vocabulary, word_rnn, snaking, start_from_top):
+    if word_rnn:
+        num_features, vocabulary = get_dict_size()
+        time_steps = time_steps_word_rnn
 
-def get_dict_size():
-    size = len(np.load('data\\word_to_int_dict.npy').item())
-    return size, size
+    testset_file = open(TESTING, 'r', encoding='utf-8')
+    level_filenames = testset_file.readlines()
+
+    seeds = []
+    for i in range(num):
+        seed = np.zeros((time_steps, vocabulary), dtype=bool)
+        if word_rnn:
+            columns_array = convert_level_to_columns(level_filenames[i][:-1], True)
+            word_to_int_dict = np.load('data\\word_to_int_dict.npy').item()
+            for t in range(time_steps):
+                seed[t, word_to_int_dict[columns_array[t]]] = 1
+        else:
+            columns_array = convert_level_to_string(level_filenames[i][:-1], snaking=snaking, start_from_top=start_from_top)
+            int_array = encode_level_string_to_array_int(columns_array, tiles_to_int_mapping)
+            for t in range(time_steps):
+                seed[t, int_array[t]] = 1
+        seeds.append(seed)
+
+    return seeds
+
+# generate level data from seed and trained model
+def generate_level_data(level_data, seed, model, time_steps, num_features, vocabulary, word_rnn):
+    if word_rnn:
+        num_features, vocabulary = get_dict_size()
+        time_steps = time_steps_word_rnn
+
+    level_data[:time_steps, :] = seed
+    index = 0
+    while index + time_steps < level_data.shape[0]:
+        x = np.zeros((1, time_steps, num_features), dtype=bool)
+        x[0,:,:] = level_data[index:index+time_steps, :].copy()
+        prediction = model.predict(x)[0, time_steps-1, :]
+        if max(prediction[0:2]) > 0.15 or max(prediction[3:]) > 0.15:
+            prediction[2] = 0
+        y = sample(prediction, 0.6)
+        level_data[index+time_steps, y] = True
+        index += 1
+
+    return level_data.copy()

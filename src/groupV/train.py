@@ -29,6 +29,7 @@ if args.word_rnn:
     train_data = utils.load_data_word(TRAINING)
     valid_data = utils.load_data_word(VALIDATION)
     num_features, vocabulary = utils.get_dict_size()
+    time_steps = time_steps_word_rnn
 else:
     train_data = utils.load_data(TRAINING, snaking=args.snaking, start_from_top=args.start_from_top)
     valid_data = utils.load_data(VALIDATION, snaking=args.snaking, start_from_top=args.start_from_top)

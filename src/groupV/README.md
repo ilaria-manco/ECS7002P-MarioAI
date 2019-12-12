@@ -29,10 +29,10 @@ Run the following command to divide dataset into training, validation and testin
 
 To train the model, please run:
 
-    python train.py
+    python train.py <run_name>
 
-You can also train other model architectures by running
+Please remember to set a name for each run! By default, the script will train a model generating levels character by character in a snaking manner. You can also train other model architectures by running
 
-    python train.py --bi_directional <0/1> --snaking <0/1> --start_from_top <0/1>
+    python train.py <run_name> --word_rnn <0/1> --bi_directional <0/1> --snaking <0/1> --start_from_top <0/1>
 
 please indicate your choice in the command (`yes - 1, no - 0`).
