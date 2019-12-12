@@ -6,12 +6,26 @@ import itertools
 import random
 from configs import *
 import utils
+from input_format.input_format_utils import *
+
+subsets = ["ge", "hopper", "notch", "ore", "original"]
 
 # get all the file pathes and their names in the dataset
-data_paths = utils.get_sub_paths(DATASET_PATH)
 all_files = []
-for data_path in data_paths:
-    all_files += utils.get_files(data_path, '.txt')
+for subset in subsets:
+
+    # get discarded levels per subset
+    subset_set = set()
+    discarded_levels_file = open("data\\discardedLevels-" + subset + ".txt", 'r', encoding='utf-8')
+    discarded_level_filenames = discarded_levels_file.readlines()
+    for file in discarded_level_filenames:
+        subset_set.add("..\\..\\" + file)
+
+    # get level files
+    subset_level_files = utils.get_files(DATASET_PATH + "\\" + subset, '.txt')
+    for file in subset_level_files:
+        if file not in subset_set:
+            all_files.append(file)
 
 # seperate the files into training, validation and testing sets
 random.shuffle(all_files)

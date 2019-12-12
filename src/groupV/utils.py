@@ -36,7 +36,7 @@ def onehot_to_int(vector_array):
 
 # get dictionary size for word rnn (predicting stripes)
 def get_dict_size():
-    size = len(np.load('data\\word_to_int_dict.npy').item())
+    size = len(np.load('data\\word_to_int_dict.npy', allow_pickle=True).item())
     return size, size
 
 # sample a block from probability prediction
@@ -69,7 +69,7 @@ def load_data(dataset_filename, snaking=False, start_from_top=False):
 
 # load training and validation data for word rnn.
 def load_data_word(dataset_filename):
-    word_to_int_dict = np.load('data\\word_to_int_dict.npy').item()
+    word_to_int_dict = np.load('data\\word_to_int_dict.npy', allow_pickle=True).item()
     dataset_file = open(dataset_filename, 'r', encoding='utf-8')
     level_filenames = dataset_file.readlines()
     data = []
@@ -99,8 +99,8 @@ def get_seeds(num, time_steps, num_features, vocabulary, word_rnn, snaking, star
     for i in range(num):
         seed = np.zeros((time_steps, vocabulary), dtype=bool)
         if word_rnn:
-            columns_array = convert_level_to_columns(level_filenames[i][:-1], True)
-            word_to_int_dict = np.load('data\\word_to_int_dict.npy').item()
+            columns_array = convert_level_to_columns(level_filenames[i//len(level_filenames)][:-1], True)
+            word_to_int_dict = np.load('data\\word_to_int_dict.npy', allow_pickle=True).item()
             for t in range(time_steps):
                 seed[t, word_to_int_dict[columns_array[t]]] = 1
         else:
@@ -126,7 +126,7 @@ def generate_level_data(level_data, seed, model, time_steps, num_features, vocab
         prediction = model.predict(x)[0, time_steps-1, :]
         if max(prediction[0:2]) > 0.15 or max(prediction[3:]) > 0.15:
             prediction[2] = 0
-        y = sample(prediction, 0.6)
+        y = sample(prediction, 0.7)
         level_data[index+time_steps, y] = True
         index += 1
 

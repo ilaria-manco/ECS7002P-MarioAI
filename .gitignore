@@ -5,4 +5,4 @@ out/
 .classpath
 .project
 *__pycache__*
-src/groupV/runs/models
+*runs*

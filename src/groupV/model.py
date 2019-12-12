@@ -54,6 +54,8 @@ class PlotLosses(Callback):
     def on_epoch_end(self, epoch, logs={}):
 
         # save best model
+        if len(self.val_losses) == 0:
+            copyfile("runs\\" + self.run_name + "\\models\\model_1.hdf5", "runs\\" + self.run_name + "\\model_best.hdf5")
         if len(self.val_losses) != 0 and logs.get('val_loss') < min(self.val_losses):
             copyfile("runs\\" +self.run_name+"\\models\\model_{}.hdf5".format(epoch), "runs\\"+self.run_name+"\\model_best.hdf5")
 

@@ -13,8 +13,8 @@ from input_format.mario_level_model import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('run_name', type=str, default=None, help='please specify the name of this run')
-parser.add_argument('--num_levels', type=int, default=2, help='please indicate how many levels you want to generate (less than 1000)')
-parser.add_argument('--word_rnn', type=bool, default=False, help='train a word rnn which takes stripes as words in model? 0 - No, 1 - Yes')
+parser.add_argument('--num_levels', type=int, default=2, help='please indicate how many levels you want to generate')
+parser.add_argument('--word_rnn', type=bool, default=True, help='train a word rnn which takes stripes as words in model? 0 - No, 1 - Yes')
 parser.add_argument('--bi_directional', type=bool, default=True, help='use bi-directional LSTM model? 0 - No, 1 - Yes')
 parser.add_argument('--snaking', type=bool, default=True, help='use snaking in data representation? 0 - No, 1 - Yes')
 parser.add_argument('--start_from_top', type=bool, default=True, help='start from top during encoding data representation? 0 - No, 1 - Yes')
@@ -45,7 +45,7 @@ for i in range(args.num_levels):
 
     # decode int_arrays into level and save level
     if(args.word_rnn):
-        int_to_word_dict = np.load('data\\int_to_word_dict.npy').item()
+        int_to_word_dict = np.load('data\\int_to_word_dict.npy', allow_pickle=True).item()
         level_word_array = decode_level_array_int_to_words(int_array, int_to_word_dict)
         convert_columns_to_level(level_word_array, "levels\\"+args.run_name+"\\level_{}.txt".format(i), top_down=args.start_from_top)
     else:

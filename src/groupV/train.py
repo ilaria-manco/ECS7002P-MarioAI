@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore")
 # parser arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('run_name', type=str, help='please specify a name of this run!')
-parser.add_argument('--word_rnn', type=bool, default=False, help='train a word rnn which takes stripes as words in model? 0 - No, 1 - Yes')
+parser.add_argument('--word_rnn', type=bool, default=True, help='train a word rnn which takes stripes as words in model? 0 - No, 1 - Yes')
 parser.add_argument('--bi_directional', type=bool, default=True, help='use bi-directional LSTM model? 0 - No, 1 - Yes')
 parser.add_argument('--snaking', type=bool, default=True, help='use snaking in data representation? 0 - No, 1 - Yes')
 parser.add_argument('--start_from_top', type=bool, default=True, help='start from top during encoding data representation? 0 - No, 1 - Yes')

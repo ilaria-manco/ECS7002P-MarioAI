@@ -15,9 +15,9 @@ Before running, please install all the requirements by running:
 
 A pre-trained model is provided as `runs/model_best.hdf5`, use the following command to generate Mario Levels, indicating how many levels you want to generate (by default, the command will generate 2 levels):
 
-    python generate_level.py <number_of_levels>
+    python generate_level.py word-bi-lstm --num_levels <number_of_levels>
 
-Please find the generated levels in `new_levels` folder.
+Please find the generated levels in `levels/word-bi-lstm` folder.
 
 ## Data
 

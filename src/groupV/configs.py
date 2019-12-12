@@ -16,7 +16,7 @@ time_steps = 32
 time_steps_word_rnn = 8
 num_features = len(all_tiles)
 embedding_size = 0     # 0 for no embedding layer
-hidden_size = 12
+hidden_size = 128
 vocabulary = len(all_tiles)
 
 # model traing configs
