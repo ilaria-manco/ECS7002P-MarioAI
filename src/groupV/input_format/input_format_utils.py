@@ -59,63 +59,6 @@ def convert_level_to_string(level_txt_filename, snaking=False, start_from_top=Tr
     return level_string
 
 
-# read level from txt file and convert into string depending on ordering parameters
-def convert_level_to_string(level_txt_filename, snaking=False, start_from_top=True):
-    raw_text = open(level_txt_filename, 'r', encoding='utf-8')
-    # array of rows
-    level_rows = raw_text.readlines()
-
-    # level size
-    lvl_width = len(level_rows[0]) - 1
-    lvl_height = len(level_rows)
-
-    # remove new line chars at end of lines
-    for i in range(0, len(level_rows) - 1, 1):
-        level_rows[i] = level_rows[i][0:lvl_width]
-
-    # convert to np array
-    level_rows_np = np.array(level_rows)
-
-    level_string = ''
-
-    if snaking:
-        if start_from_top:
-            top_down = True
-            # scan level with snaking starting from top
-            for i in range(0, lvl_width, 1):
-                for j in range(0, lvl_height, 1):
-                    if top_down:
-                        level_string = level_string + level_rows_np[j][i]
-                    else:
-                        level_string = level_string + level_rows_np[lvl_height - j - 1][i]
-                # change direction
-                top_down = not top_down
-        else:
-            # scan level with snaking starting from bottom
-            bottom_up = True
-            for i in range(0, lvl_width, 1):
-                for j in range(0, lvl_height, 1):
-                    if bottom_up:
-                        level_string = level_string + level_rows_np[lvl_height - j - 1][i]
-                    else:
-                        level_string = level_string + level_rows_np[j][i]
-                # change direction
-                bottom_up = not bottom_up
-    else:
-        if start_from_top:
-            # scan level without snaking starting from top
-            for i in range(0, lvl_width, 1):
-                for j in range(0, lvl_height, 1):
-                    level_string = level_string + level_rows_np[j][i]
-        else:
-            # scan level without snaking starting from bottom
-            for i in range(0, lvl_width, 1):
-                for j in range(0, lvl_height, 1):
-                    level_string = level_string + level_rows_np[lvl_height - j - 1][i]
-
-    return level_string
-
-
 # convert string to level depending on ordering parameters and write to txt file
 def convert_string_to_level(level_string, level_txt_filename, lvl_height=16, snaking=False, start_from_top=True):
     # array of rows
